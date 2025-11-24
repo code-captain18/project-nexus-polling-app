@@ -1,6 +1,7 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, Share, Text, TouchableOpacity, View } from "react-native";
 import "../../global.css";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchPollByIdAsync, votePollAsync } from "../../store/thunks/pollThunks";
@@ -50,13 +51,44 @@ export default function PollDetail() {
         return Math.round((votes / poll.totalVotes) * 100);
     };
 
+    const handleShare = async () => {
+        try {
+            const shareMessage = `📊 ${poll.question}\n\n${poll.options.map((opt, i) => `${i + 1}. ${opt.text}`).join('\n')}\n\nVote now on Vunes Poll!`;
+
+            const result = await Share.share({
+                message: shareMessage,
+                title: poll.question,
+            }, {
+                dialogTitle: 'Share Poll',
+                subject: poll.question, // For email on iOS
+            });
+
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    console.log('Shared with activity type:', result.activityType);
+                } else {
+                    console.log('Poll shared successfully');
+                }
+            }
+        } catch (error: any) {
+            Alert.alert('Error', 'Failed to share poll. Please try again.');
+            console.error('Share error:', error);
+        }
+    };
+
     return (
         <View className="flex-1 bg-background">
             {/* Header */}
             <View className="bg-secondary-dark pt-12 pb-6 px-6">
-                <TouchableOpacity onPress={() => router.back()} className="mb-4">
-                    <Text className="text-primary text-base">← Back</Text>
-                </TouchableOpacity>
+                <View className="flex-row items-center justify-between mb-4">
+                    <TouchableOpacity onPress={() => router.back()}>
+                        <Text className="text-primary text-base">← Back</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleShare} className="flex-row items-center">
+                        <Ionicons name="share-social-outline" size={20} color="#0B6ECA" />
+                        <Text className="text-primary text-sm font-medium ml-1">Share</Text>
+                    </TouchableOpacity>
+                </View>
                 <Text className="text-2xl font-bold text-background">
                     {poll.question}
                 </Text>
