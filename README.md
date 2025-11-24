@@ -1,50 +1,167 @@
-# Welcome to your Expo app 👋
+# Vunes Poll
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A full-stack polling application with React Native (Expo) frontend and Express backend.
 
-## Get started
+## Project Structure
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+vunes-poll/
+├── frontend/          # React Native Expo app
+│   ├── app/          # Expo Router pages
+│   ├── components/   # React components
+│   ├── config/       # API configuration
+│   ├── services/     # API services
+│   ├── store/        # Redux store
+│   └── assets/       # Images and fonts
+│
+├── backend/          # Express API server
+│   ├── src/
+│   │   ├── routes/   # API routes
+│   │   ├── middleware/ # Auth middleware
+│   │   ├── data/     # Data store
+│   │   └── types.ts  # TypeScript types
+│   └── dist/         # Compiled output
+│
+└── README.md         # This file
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Features
 
-## Learn more
+### Frontend
+- 📱 Cross-platform (iOS, Android, Web)
+- 🎨 Tailwind CSS with NativeWind
+- 🔄 Redux for state management
+- 🧭 File-based routing with Expo Router
+- 🔐 JWT authentication
+- 📊 Real-time poll voting
+- 🔔 Notifications
+- 👤 User profiles
 
-To learn more about developing your project with Expo, look at the following resources:
+### Backend
+- 🚀 RESTful API with Express
+- 🔒 JWT authentication
+- 📝 TypeScript
+- 🗃️ In-memory data store (easily replaceable with database)
+- ✅ CORS enabled
+- 🔐 Password hashing with bcryptjs
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Getting Started
 
-## Join the community
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
+- Expo CLI (for mobile development)
 
-Join our community of developers creating universal apps.
+### Frontend Setup
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+cd frontend
+npm install
+npm start
+```
+
+The Expo development server will start. You can:
+- Press `a` for Android emulator
+- Press `i` for iOS simulator
+- Press `w` for web browser
+- Scan QR code with Expo Go app
+
+### Backend Setup
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+The API server will run at `http://localhost:3000`
+
+### Environment Variables
+
+#### Frontend (`frontend/.env`)
+```env
+API_URL=http://localhost:3000
+```
+
+#### Backend (`backend/.env`)
+```env
+PORT=3000
+JWT_SECRET=your-super-secret-jwt-key
+NODE_ENV=development
+```
+
+## API Endpoints
+
+### Authentication
+- `POST /auth/signup` - Register
+- `POST /auth/signin` - Login
+- `POST /auth/logout` - Logout
+- `GET /auth/me` - Get current user
+- `POST /auth/refresh` - Refresh token
+
+### Polls
+- `GET /polls` - Get all polls
+- `GET /polls/:id` - Get poll by ID
+- `POST /polls` - Create poll (auth required)
+- `PUT /polls/:id` - Update poll (auth required)
+- `DELETE /polls/:id` - Delete poll (auth required)
+- `POST /polls/:id/vote` - Vote (auth required)
+
+### Users
+- `GET /users/profile` - Get profile (auth required)
+- `PUT /users/profile` - Update profile (auth required)
+- `GET /users/polls` - Get user's polls (auth required)
+- `GET /users/votes` - Get user's votes (auth required)
+
+### Notifications
+- `GET /notifications` - Get notifications (auth required)
+- `PATCH /notifications/:id/read` - Mark as read (auth required)
+- `POST /notifications/read-all` - Mark all as read (auth required)
+
+## Development
+
+### Frontend
+```bash
+cd frontend
+npm run android    # Run on Android
+npm run ios        # Run on iOS
+npm run web        # Run on web
+npm run lint       # Run ESLint
+```
+
+### Backend
+```bash
+cd backend
+npm run dev        # Development with hot reload
+npm run build      # Build TypeScript
+npm start          # Run production build
+```
+
+## Tech Stack
+
+### Frontend
+- React Native
+- Expo
+- TypeScript
+- Redux Toolkit
+- NativeWind (Tailwind CSS)
+- Expo Router
+
+### Backend
+- Node.js
+- Express
+- TypeScript
+- JWT
+- bcryptjs
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+ISC
