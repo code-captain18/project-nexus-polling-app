@@ -20,6 +20,8 @@ export interface Poll {
     totalVotes: number;
     createdBy?: string;
     createdAt?: string;
+    startDate?: string;
+    endDate?: string;
 }
 
 interface UserVote {

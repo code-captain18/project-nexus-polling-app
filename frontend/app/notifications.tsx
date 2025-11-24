@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import "../global.css";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -7,13 +7,16 @@ import { fetchNotificationsAsync, markNotificationReadAsync } from "../store/thu
 export default function Notifications() {
     const dispatch = useAppDispatch();
     const { isAuthenticated } = useAppSelector((state) => state.auth);
-    const { notifications, loading } = useAppSelector((state) => state.notifications);
+    const { notifications, loading, error } = useAppSelector((state) => state.notifications);
+    const [retryCount, setRetryCount] = useState(0);
 
     useEffect(() => {
-        if (isAuthenticated) {
-            dispatch(fetchNotificationsAsync());
+        if (isAuthenticated && retryCount < 3) {
+            dispatch(fetchNotificationsAsync()).catch(() => {
+                // Silently handle the error - already tracked in Redux
+            });
         }
-    }, [dispatch, isAuthenticated]);
+    }, [dispatch, isAuthenticated, retryCount]);
 
     const handleMarkAsRead = (id: string) => {
         dispatch(markNotificationReadAsync(id));
@@ -38,6 +41,26 @@ export default function Notifications() {
                         <Text className="text-neutral text-center mb-2">
                             Sign in to view notifications
                         </Text>
+                    </View>
+                ) : error ? (
+                    <View className="items-center justify-center py-12">
+                        <Text className="text-neutral text-center mb-4">
+                            Unable to load notifications
+                        </Text>
+                        <Text className="text-neutral-light text-sm text-center mb-4">
+                            {error.includes('timeout')
+                                ? 'Server is taking too long to respond'
+                                : 'Please check your connection and try again'}
+                        </Text>
+                        <TouchableOpacity
+                            onPress={() => {
+                                setRetryCount(prev => prev + 1);
+                                dispatch(fetchNotificationsAsync());
+                            }}
+                            className="bg-primary rounded-xl px-6 py-3"
+                        >
+                            <Text className="text-white font-semibold">Retry</Text>
+                        </TouchableOpacity>
                     </View>
                 ) : loading ? (
                     <View className="items-center justify-center py-12">

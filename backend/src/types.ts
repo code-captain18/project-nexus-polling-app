@@ -13,7 +13,8 @@ export interface Poll {
     totalVotes: number;
     createdBy: string;
     createdAt: Date;
-    expiresAt?: Date;
+    startDate?: Date;
+    endDate?: Date;
 }
 
 export interface PollOption {

@@ -9,7 +9,8 @@ export interface Poll {
     totalVotes: number;
     createdBy: string;
     createdAt: string;
-    expiresAt?: string;
+    startDate?: string;
+    endDate?: string;
 }
 
 export interface PollOption {
@@ -21,7 +22,8 @@ export interface PollOption {
 export interface CreatePollData {
     question: string;
     options: string[];
-    expiresAt?: string;
+    startDate?: string;
+    endDate?: string;
 }
 
 export interface VoteData {

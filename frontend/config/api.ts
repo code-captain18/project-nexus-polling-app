@@ -23,7 +23,7 @@ const getApiUrl = () => {
 export const API_CONFIG = {
     // Temporarily hardcoded for mobile testing - change to localhost for web
     BASE_URL: 'http://192.168.0.178:3000',
-    TIMEOUT: 30000, // 30 seconds
+    TIMEOUT: 10000, // 10 seconds
 };
 
 console.log('[API Config] Final BASE_URL:', API_CONFIG.BASE_URL);// API Endpoints

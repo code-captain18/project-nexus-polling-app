@@ -42,12 +42,25 @@ router.get('/:id', (req: Request, res: Response) => {
 router.post('/', authenticate, (req: Request, res: Response) => {
     try {
         const authReq = req as AuthRequest;
-        const { question, options, expiresAt } = req.body;
+        const { question, options, startDate, endDate } = req.body;
 
         if (!question || !options || !Array.isArray(options) || options.length < 2) {
             res.status(400).json({
                 success: false,
                 error: 'Question and at least 2 options are required',
+            });
+            return;
+        }
+
+        // Validate dates
+        const now = new Date();
+        const start = startDate ? new Date(startDate) : now;
+        const end = endDate ? new Date(endDate) : undefined;
+
+        if (end && start >= end) {
+            res.status(400).json({
+                success: false,
+                error: 'End date must be after start date',
             });
             return;
         }
@@ -63,7 +76,8 @@ router.post('/', authenticate, (req: Request, res: Response) => {
             totalVotes: 0,
             createdBy: authReq.user?.id || 'unknown',
             createdAt: new Date(),
-            expiresAt: expiresAt ? new Date(expiresAt) : undefined,
+            startDate: startDate ? new Date(startDate) : undefined,
+            endDate: endDate ? new Date(endDate) : undefined,
         };
 
         polls.push(poll);
@@ -186,6 +200,24 @@ router.post('/:id/vote', authenticate, (req: Request, res: Response) => {
             res.status(404).json({
                 success: false,
                 error: 'Poll not found',
+            });
+            return;
+        }
+
+        // Check if poll is active
+        const now = new Date();
+        if (poll.startDate && now < poll.startDate) {
+            res.status(400).json({
+                success: false,
+                error: 'Poll has not started yet',
+            });
+            return;
+        }
+
+        if (poll.endDate && now > poll.endDate) {
+            res.status(400).json({
+                success: false,
+                error: 'Poll has ended',
             });
             return;
         }
