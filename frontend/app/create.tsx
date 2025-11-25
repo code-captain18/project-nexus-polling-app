@@ -11,6 +11,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { DateTimePickerButton, PageHeader, PrimaryButton } from "../components";
 import "../global.css";
 import { useAppDispatch } from "../store/hooks";
 import { createPollAsync } from "../store/thunks/pollThunks";
@@ -102,19 +103,12 @@ export default function CreatePoll() {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             className="flex-1 bg-background"
         >
-            {/* Header */}
-            <View className="pt-12 pb-6 px-6" style={{ backgroundColor: '#1E293B' }}>
-                <TouchableOpacity onPress={() => router.back()} className="mb-4 flex-row items-center">
-                    <Ionicons name="arrow-back" size={24} color="#60A5FA" />
-                    <Text className="text-base font-semibold ml-2" style={{ color: '#60A5FA' }}>Cancel</Text>
-                </TouchableOpacity>
-                <Text className="text-3xl font-bold text-white mb-1">
-                    New Poll
-                </Text>
-                <Text className="text-base" style={{ color: '#CBD5E1' }}>
-                    Create and share your poll
-                </Text>
-            </View>
+            <PageHeader
+                title="New Poll"
+                subtitle="Create and share your poll"
+                showBack
+                backText="Cancel"
+            />
 
             <ScrollView className="flex-1 px-5 pt-6" showsVerticalScrollIndicator={false}>
                 {/* Question Input */}
@@ -215,88 +209,36 @@ export default function CreatePoll() {
                     </Text>
 
                     {/* Start Date & Time */}
-                    <View className="mb-4">
-                        <Text className="text-xs font-semibold mb-2" style={{ color: '#64748B' }}>START DATE & TIME</Text>
-                        <TouchableOpacity
-                            onPress={() => {
-                                setStartTimeMode('date');
-                                setShowStartPicker(true);
-                            }}
-                            className="rounded-2xl p-4 flex-row items-center justify-between"
-                            style={{
-                                backgroundColor: '#FFFFFF',
-                                borderWidth: 2,
-                                borderColor: startDate ? '#10B981' : '#E2E8F0',
-                            }}
-                        >
-                            <View className="flex-row items-center flex-1">
-                                <View className="w-10 h-10 rounded-xl items-center justify-center" style={{ backgroundColor: startDate ? '#D1FAE5' : '#EFF6FF' }}>
-                                    <Ionicons name="calendar-outline" size={22} color={startDate ? '#10B981' : '#2563EB'} />
-                                </View>
-                                <Text className="ml-3 text-base font-semibold" style={{ color: startDate ? '#1E293B' : '#64748B' }}>
-                                    {startDate
-                                        ? startDate.toLocaleString('en-US', {
-                                            month: 'short',
-                                            day: 'numeric',
-                                            hour: 'numeric',
-                                            minute: '2-digit'
-                                        })
-                                        : 'Starts immediately'}
-                                </Text>
-                            </View>
-                            {startDate && (
-                                <TouchableOpacity
-                                    onPress={() => setStartDate(undefined)}
-                                    className="w-8 h-8 rounded-lg items-center justify-center"
-                                    style={{ backgroundColor: '#FEE2E2' }}
-                                >
-                                    <Ionicons name="close" size={18} color="#EF4444" />
-                                </TouchableOpacity>
-                            )}
-                        </TouchableOpacity>
-                    </View>
+                    <DateTimePickerButton
+                        label="START DATE & TIME"
+                        value={startDate}
+                        onPress={() => {
+                            setStartTimeMode('date');
+                            setShowStartPicker(true);
+                        }}
+                        onClear={() => setStartDate(undefined)}
+                        placeholder="Starts immediately"
+                        iconName="calendar-outline"
+                        color="#10B981"
+                        bgColor="#D1FAE5"
+                        borderColor="#10B981"
+                    />
 
                     {/* End Date & Time */}
-                    <View className="mb-2">
-                        <Text className="text-xs font-semibold mb-2" style={{ color: '#64748B' }}>END DATE & TIME</Text>
-                        <TouchableOpacity
-                            onPress={() => {
-                                setEndTimeMode('date');
-                                setShowEndPicker(true);
-                            }}
-                            className="rounded-2xl p-4 flex-row items-center justify-between"
-                            style={{
-                                backgroundColor: '#FFFFFF',
-                                borderWidth: 2,
-                                borderColor: endDate ? '#F59E0B' : '#E2E8F0',
-                            }}
-                        >
-                            <View className="flex-row items-center flex-1">
-                                <View className="w-10 h-10 rounded-xl items-center justify-center" style={{ backgroundColor: endDate ? '#FEF3C7' : '#EFF6FF' }}>
-                                    <Ionicons name="time-outline" size={22} color={endDate ? '#F59E0B' : '#2563EB'} />
-                                </View>
-                                <Text className="ml-3 text-base font-semibold" style={{ color: endDate ? '#1E293B' : '#64748B' }}>
-                                    {endDate
-                                        ? endDate.toLocaleString('en-US', {
-                                            month: 'short',
-                                            day: 'numeric',
-                                            hour: 'numeric',
-                                            minute: '2-digit'
-                                        })
-                                        : 'No end date'}
-                                </Text>
-                            </View>
-                            {endDate && (
-                                <TouchableOpacity
-                                    onPress={() => setEndDate(undefined)}
-                                    className="w-8 h-8 rounded-lg items-center justify-center"
-                                    style={{ backgroundColor: '#FEE2E2' }}
-                                >
-                                    <Ionicons name="close" size={18} color="#EF4444" />
-                                </TouchableOpacity>
-                            )}
-                        </TouchableOpacity>
-                    </View>
+                    <DateTimePickerButton
+                        label="END DATE & TIME"
+                        value={endDate}
+                        onPress={() => {
+                            setEndTimeMode('date');
+                            setShowEndPicker(true);
+                        }}
+                        onClear={() => setEndDate(undefined)}
+                        placeholder="No end date"
+                        iconName="time-outline"
+                        color="#F59E0B"
+                        bgColor="#FEF3C7"
+                        borderColor="#F59E0B"
+                    />
 
                     {/* Date Pickers */}
                     {showStartPicker && (
@@ -411,35 +353,13 @@ export default function CreatePoll() {
 
             {/* Create Button */}
             <View className="px-5 py-5" style={{ backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#E2E8F0' }}>
-                <TouchableOpacity
+                <PrimaryButton
                     onPress={handleCreatePoll}
-                    disabled={!canSubmit || loading}
-                    className="rounded-2xl py-4 items-center flex-row justify-center"
-                    style={{
-                        backgroundColor: canSubmit && !loading ? '#2563EB' : '#E2E8F0',
-                        shadowColor: '#2563EB',
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: canSubmit && !loading ? 0.3 : 0,
-                        shadowRadius: 8,
-                        elevation: canSubmit && !loading ? 5 : 0,
-                    }}
-                >
-                    {loading ? (
-                        <>
-                            <Ionicons name="hourglass-outline" size={24} color="#FFFFFF" />
-                            <Text className="text-lg font-bold ml-2" style={{ color: '#FFFFFF' }}>
-                                Creating...
-                            </Text>
-                        </>
-                    ) : (
-                        <>
-                            <Ionicons name="checkmark-circle" size={24} color={canSubmit ? '#FFFFFF' : '#94A3B8'} />
-                            <Text className="text-lg font-bold ml-2" style={{ color: canSubmit ? '#FFFFFF' : '#94A3B8' }}>
-                                Create Poll
-                            </Text>
-                        </>
-                    )}
-                </TouchableOpacity>
+                    disabled={!canSubmit}
+                    loading={loading}
+                    title="Create Poll"
+                    loadingTitle="Creating..."
+                />
             </View>
         </KeyboardAvoidingView>
     );
