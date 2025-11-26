@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { Alert, Dimensions, ScrollView, Share, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { BarChart, PieChart } from "react-native-chart-kit";
 import { ChartTypeToggle, PageHeader, PrimaryButton, ResultsBreakdown, StatusBanner, VotingOption } from "../../components";
@@ -36,6 +36,26 @@ export default function PollDetail() {
     const isPending = startDate && now < startDate;
     const isEnded = endDate && now > endDate;
     const isActive = !isPending && !isEnded;
+
+    // Fetch poll data when screen comes into focus
+    useFocusEffect(
+        useCallback(() => {
+            if (id && typeof id === 'string') {
+                dispatch(fetchPollByIdAsync(id));
+            }
+        }, [id, dispatch])
+    );
+
+    // Auto-refresh poll data every 10 seconds when viewing results
+    useEffect(() => {
+        if (!isEditing && hasVoted && id && typeof id === 'string') {
+            const interval = setInterval(() => {
+                dispatch(fetchPollByIdAsync(id));
+            }, 10000); // Refresh every 10 seconds
+
+            return () => clearInterval(interval);
+        }
+    }, [id, dispatch, isEditing, hasVoted]);
 
     useEffect(() => {
         if (id && typeof id === 'string') {
