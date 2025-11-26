@@ -4,6 +4,7 @@ import {
     deletePollAsync,
     fetchPollByIdAsync,
     fetchPollsAsync,
+    updatePollAsync,
     votePollAsync
 } from '../thunks/pollThunks';
 
@@ -179,6 +180,24 @@ const pollsSlice = createSlice({
                 state.userVotes = state.userVotes.filter(v => v.pollId !== action.meta.arg);
             })
             .addCase(deletePollAsync.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            });
+
+        // Update Poll
+        builder
+            .addCase(updatePollAsync.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updatePollAsync.fulfilled, (state, action) => {
+                state.loading = false;
+                const index = state.polls.findIndex(p => p.id === action.payload.id);
+                if (index >= 0) {
+                    state.polls[index] = action.payload;
+                }
+            })
+            .addCase(updatePollAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             });

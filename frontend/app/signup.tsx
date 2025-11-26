@@ -13,6 +13,12 @@ import "../global.css";
 import { useAppDispatch } from "../store/hooks";
 import { signUpAsync } from "../store/thunks/authThunks";
 
+// Email validation helper
+const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email.trim());
+};
+
 export default function SignUp() {
     const router = useRouter();
     const dispatch = useAppDispatch();
@@ -21,11 +27,17 @@ export default function SignUp() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [emailTouched, setEmailTouched] = useState(false);
 
     const handleSignUp = async () => {
         // Validate inputs
         if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
             alert("Please fill in all fields");
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            alert("Please enter a valid email address");
             return;
         }
 
@@ -55,10 +67,13 @@ export default function SignUp() {
     const canSubmit =
         name.trim() !== "" &&
         email.trim() !== "" &&
+        isValidEmail(email) &&
         password.trim() !== "" &&
         confirmPassword.trim() !== "" &&
         password === confirmPassword &&
         password.length >= 6;
+
+    const showEmailError = emailTouched && email.trim() !== "" && !isValidEmail(email);
 
     return (
         <KeyboardAvoidingView
@@ -120,13 +135,22 @@ export default function SignUp() {
                             <TextInput
                                 value={email}
                                 onChangeText={setEmail}
+                                onBlur={() => setEmailTouched(true)}
                                 placeholder="your@email.com"
                                 placeholderTextColor="#a1a3ae"
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                                 autoComplete="email"
-                                className="bg-white/10 border-2 border-primary-light/30 rounded-xl p-3.5 text-background text-base"
+                                style={{
+                                    borderColor: showEmailError ? '#EF4444' : 'rgba(186, 230, 253, 0.3)',
+                                }}
+                                className="bg-white/10 border-2 rounded-xl p-3.5 text-background text-base"
                             />
+                            {showEmailError && (
+                                <Text className="text-red-400 text-xs mt-1">
+                                    Please enter a valid email address
+                                </Text>
+                            )}
                         </View>
 
                         {/* Password Input */}

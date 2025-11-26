@@ -90,3 +90,21 @@ export const deletePollAsync = createAsyncThunk(
         }
     }
 );
+
+// Update Poll
+export const updatePollAsync = createAsyncThunk(
+    'polls/update',
+    async ({ id, data }: { id: string; data: Partial<CreatePollData> }, { rejectWithValue }) => {
+        try {
+            const response = await pollService.updatePoll(id, data);
+
+            if (!response.success) {
+                return rejectWithValue(response.error || 'Failed to update poll');
+            }
+
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(error.message || 'An error occurred');
+        }
+    }
+);

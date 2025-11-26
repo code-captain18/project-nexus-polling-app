@@ -1,5 +1,5 @@
-import { useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { EmptyState, LoadingState, PageHeader, PollCard, PrimaryButton } from "../components";
 import "../global.css";
@@ -12,9 +12,12 @@ export default function Index() {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const { polls, loading } = useAppSelector((state) => state.polls);
 
-  useEffect(() => {
-    dispatch(fetchPollsAsync());
-  }, [dispatch]);
+  // Fetch polls when screen comes into focus (e.g., after creating a poll or navigating back)
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchPollsAsync());
+    }, [dispatch])
+  );
 
   const handleCreatePoll = () => {
     if (!isAuthenticated) {

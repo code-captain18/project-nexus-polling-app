@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import "../global.css";
@@ -5,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { fetchNotificationsAsync, markNotificationReadAsync } from "../store/thunks/notificationThunks";
 
 export default function Notifications() {
+    const router = useRouter();
     const dispatch = useAppDispatch();
     const { isAuthenticated } = useAppSelector((state) => state.auth);
     const { notifications, loading, error } = useAppSelector((state) => state.notifications);
@@ -20,6 +22,18 @@ export default function Notifications() {
 
     const handleMarkAsRead = (id: string) => {
         dispatch(markNotificationReadAsync(id));
+    };
+
+    const handleNotificationPress = (notification: any) => {
+        // Mark as read if unread
+        if (!notification.read) {
+            handleMarkAsRead(notification.id);
+        }
+
+        // Navigate to poll if pollId exists in data
+        if (notification.data?.pollId) {
+            router.push(`/poll/${notification.data.pollId}` as any);
+        }
     };
 
     return (
@@ -79,7 +93,7 @@ export default function Notifications() {
                     notifications.map((notification) => (
                         <TouchableOpacity
                             key={notification.id}
-                            onPress={() => !notification.read && handleMarkAsRead(notification.id)}
+                            onPress={() => handleNotificationPress(notification)}
                             className={`bg-white rounded-2xl p-4 mb-3 shadow-sm border ${notification.read ? 'border-primary-light/20' : 'border-primary/40'
                                 }`}
                         >
