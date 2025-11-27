@@ -31,7 +31,8 @@ module.exports = {
             permissions: [
                 "INTERNET",
                 "ACCESS_NETWORK_STATE"
-            ]
+            ],
+            networkSecurityConfig: "./android/app/src/main/res/xml/network_security_config.xml"
         },
         web: {
             bundler: "metro",

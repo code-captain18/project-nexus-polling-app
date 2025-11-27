@@ -36,7 +36,7 @@ const getApiUrl = () => {
 // API Configuration
 export const API_CONFIG = {
     BASE_URL: getApiUrl(),
-    TIMEOUT: 10000, // 10 seconds
+    TIMEOUT: 60000, // 60 seconds (to account for Render free tier cold starts)
 };
 
 console.log('[API Config] Environment:', Constants.appOwnership || 'standalone');

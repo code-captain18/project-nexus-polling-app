@@ -58,11 +58,22 @@ const request = async <T>(
         };
     } catch (error: any) {
         console.error(`[API] Error: ${endpoint}`, error.message, error.code);
+        console.error(`[API] Error details:`, JSON.stringify({
+            message: error.message,
+            code: error.code,
+            hasResponse: !!error.response,
+            hasRequest: !!error.request,
+            config: {
+                url: error.config?.url,
+                baseURL: error.config?.baseURL,
+                timeout: error.config?.timeout,
+            }
+        }));
 
         if (error.code === 'ECONNABORTED') {
             return {
                 success: false,
-                error: 'Request timeout',
+                error: 'Request timeout. The server might be sleeping (cold start). Please try again.',
             };
         }
 
@@ -76,9 +87,10 @@ const request = async <T>(
         } else if (error.request) {
             // Request made but no response
             console.error('[API] No response from server. BASE_URL:', API_CONFIG.BASE_URL);
+            console.error('[API] Request config:', error.config);
             return {
                 success: false,
-                error: `Network error - Cannot reach ${API_CONFIG.BASE_URL}. Check your network connection.`,
+                error: `Network error - Cannot reach server. Please check your internet connection and try again.`,
             };
         } else {
             // Error setting up request
