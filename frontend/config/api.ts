@@ -1,8 +1,16 @@
 import Constants from 'expo-constants';
 
+// Determine if we're in development or production
+const __DEV__ = process.env.NODE_ENV === 'development';
+
 // Get the correct API URL based on environment
 const getApiUrl = () => {
-    // Try to get the debugger host from Constants
+    // Production URL
+    if (!__DEV__) {
+        return 'https://project-nexus-polling-app.onrender.com';
+    }
+
+    // Development: Try to get the debugger host from Constants
     const debuggerHost = Constants.manifest?.debuggerHost ||
         Constants.manifest2?.extra?.expoGo?.debuggerHost ||
         Constants.expoConfig?.hostUri;
@@ -21,11 +29,11 @@ const getApiUrl = () => {
 
 // API Configuration
 export const API_CONFIG = {
-    // Temporarily hardcoded for mobile testing - change to localhost for web
-    BASE_URL: 'http://192.168.0.178:3000',
+    BASE_URL: getApiUrl(),
     TIMEOUT: 10000, // 10 seconds
 };
 
+console.log('[API Config] Environment:', __DEV__ ? 'development' : 'production');
 console.log('[API Config] Final BASE_URL:', API_CONFIG.BASE_URL);// API Endpoints
 export const API_ENDPOINTS = {
     // Auth endpoints
