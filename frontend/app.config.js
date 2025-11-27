@@ -35,7 +35,10 @@ module.exports = {
             typedRoutes: true
         },
         extra: {
-            apiUrl: process.env.API_URL || "http://localhost:3000"
+            apiUrl: process.env.API_URL || "http://localhost:3000",
+            eas: {
+                projectId: "addffad8-0636-4c23-a07e-7343df14e60d"
+            }
         }
     }
 };
