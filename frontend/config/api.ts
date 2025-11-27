@@ -4,9 +4,13 @@ import Constants from 'expo-constants';
 const getApiUrl = () => {
     // Check if running in Expo Go (development)
     const isExpoGo = Constants.appOwnership === 'expo';
+    const isDev = typeof __DEV__ !== 'undefined' ? __DEV__ : false;
+
+    console.log('[API Config] appOwnership:', Constants.appOwnership);
+    console.log('[API Config] __DEV__:', isDev);
 
     // Development: Running in Expo Go or local dev
-    if (isExpoGo || __DEV__) {
+    if (isExpoGo || isDev) {
         // Try to get the debugger host from Constants
         const debuggerHost = Constants.manifest?.debuggerHost ||
             Constants.manifest2?.extra?.expoGo?.debuggerHost ||
