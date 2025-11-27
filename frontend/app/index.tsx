@@ -1,45 +1,26 @@
-import { useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
-import { ScrollView, Text, View } from "react-native";
-import { EmptyState, LoadingState, PageHeader, PollCard, PrimaryButton } from "../components";
+import { ScrollView, View } from "react-native";
+import { EmptyState, LoadingState, PageHeader, PollCard } from "../components";
 import "../global.css";
+import { useAuthRedirect } from "../hooks";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { fetchPollsAsync } from "../store/thunks/pollThunks";
+import { getPollStatus } from "../utils";
 
 export default function Index() {
-  const router = useRouter();
   const dispatch = useAppDispatch();
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAuthRedirect();
   const { polls, loading } = useAppSelector((state) => state.polls);
 
-  // Fetch polls when screen comes into focus (e.g., after creating a poll or navigating back)
+  // Fetch polls when screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      dispatch(fetchPollsAsync());
-    }, [dispatch])
+      if (isAuthenticated) {
+        dispatch(fetchPollsAsync());
+      }
+    }, [dispatch, isAuthenticated])
   );
-
-  const handleCreatePoll = () => {
-    if (!isAuthenticated) {
-      router.push("/signin" as any);
-    } else {
-      router.push("/create" as any);
-    }
-  };
-
-  const getPollStatus = (poll: any): { status: 'pending' | 'active' | 'ended', label: string, color: string, bg: string } => {
-    const now = new Date();
-    const startDate = poll.startDate ? new Date(poll.startDate) : null;
-    const endDate = poll.endDate ? new Date(poll.endDate) : null;
-
-    if (startDate && now < startDate) {
-      return { status: 'pending', label: 'Upcoming', color: '#F59E0B', bg: '#FEF3C7' };
-    }
-    if (endDate && now > endDate) {
-      return { status: 'ended', label: 'Closed', color: '#64748B', bg: '#F1F5F9' };
-    }
-    return { status: 'active', label: 'Live', color: '#10B981', bg: '#D1FAE5' };
-  };
 
   return (
     <View className="flex-1 bg-background">
@@ -60,24 +41,14 @@ export default function Index() {
           />
         ) : (
           polls.map((poll) => (
-            <PollCard key={poll.id} poll={poll} getPollStatus={getPollStatus} />
+            <PollCard
+              key={poll.id}
+              poll={poll}
+              getPollStatus={() => getPollStatus(poll.startDate, poll.endDate)}
+            />
           ))
         )}
       </ScrollView>
-
-      {/* Create Poll Button */}
-      <View className="px-5 py-5" style={{ backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#E2E8F0' }}>
-        <PrimaryButton
-          onPress={handleCreatePoll}
-          title="Create New Poll"
-          icon="add-circle-outline"
-        />
-        {!isAuthenticated && (
-          <Text className="text-neutral-light text-xs text-center mt-3">
-            Sign in required to create polls
-          </Text>
-        )}
-      </View>
     </View>
   );
 }

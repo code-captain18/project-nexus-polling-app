@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+    Image,
     KeyboardAvoidingView,
     Platform,
     ScrollView,
@@ -43,6 +44,11 @@ export default function SignIn() {
             setLoading(true);
             const result = await dispatch(signInAsync({ email, password })).unwrap();
 
+            // Reset form fields
+            setEmail("");
+            setPassword("");
+            setEmailTouched(false);
+
             // Navigate to home on success
             router.replace("/" as any);
         } catch (error: any) {
@@ -67,9 +73,11 @@ export default function SignIn() {
                 <View className="flex-1 justify-center px-6">
                     {/* Logo/Title Section */}
                     <View className="items-center mb-12">
-                        <View className="w-20 h-20 bg-primary rounded-full items-center justify-center mb-4">
-                            <Text className="text-4xl">📊</Text>
-                        </View>
+                        <Image
+                            source={require("../assets/images/vunes-logo.png")}
+                            style={{ width: 80, height: 80, marginBottom: 16 }}
+                            resizeMode="contain"
+                        />
                         <Text className="text-3xl font-bold text-background mb-2">
                             Welcome Back
                         </Text>

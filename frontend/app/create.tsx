@@ -15,6 +15,7 @@ import { DateTimePickerButton, PageHeader, PrimaryButton } from "../components";
 import "../global.css";
 import { useAppDispatch } from "../store/hooks";
 import { createPollAsync } from "../store/thunks/pollThunks";
+import { COLORS, LIMITS, validatePollData } from "../utils";
 
 export default function CreatePoll() {
     const router = useRouter();
@@ -32,13 +33,13 @@ export default function CreatePoll() {
     const [endTimeMode, setEndTimeMode] = useState<'date' | 'time'>('date');
 
     const addOption = () => {
-        if (options.length < 6) {
+        if (options.length < LIMITS.pollOptions.max) {
             setOptions([...options, ""]);
         }
     };
 
     const removeOption = (index: number) => {
-        if (options.length > 2) {
+        if (options.length > LIMITS.pollOptions.min) {
             setOptions(options.filter((_, i) => i !== index));
         }
     };
@@ -50,21 +51,11 @@ export default function CreatePoll() {
     };
 
     const handleCreatePoll = async () => {
-        // Validate inputs
-        if (!question.trim()) {
-            alert("Please enter a question");
-            return;
-        }
-
         const validOptions = options.filter((opt) => opt.trim() !== "");
-        if (validOptions.length < 2) {
-            alert("Please add at least 2 options");
-            return;
-        }
+        const validation = validatePollData(question, validOptions, startDate, endDate);
 
-        // Validate dates
-        if (startDate && endDate && startDate >= endDate) {
-            alert("End date must be after start date");
+        if (!validation.isValid) {
+            alert(validation.error);
             return;
         }
 
@@ -123,22 +114,22 @@ export default function CreatePoll() {
                         placeholderTextColor="#94A3B8"
                         className="rounded-2xl p-4 text-base"
                         style={{
-                            backgroundColor: '#FFFFFF',
+                            backgroundColor: COLORS.white,
                             borderWidth: 2,
-                            borderColor: question ? '#2563EB' : '#E2E8F0',
-                            color: '#1E293B',
+                            borderColor: question ? COLORS.primary.main : COLORS.neutral.border,
+                            color: COLORS.neutral.dark,
                             minHeight: 100,
                             textAlignVertical: 'top'
                         }}
                         multiline
-                        maxLength={200}
+                        maxLength={LIMITS.pollQuestion.max}
                     />
                     <View className="flex-row justify-between mt-2">
                         <Text className="text-xs font-medium" style={{ color: '#64748B' }}>
                             Be clear and concise
                         </Text>
-                        <Text className="text-xs font-semibold" style={{ color: question.length > 180 ? '#EF4444' : '#64748B' }}>
-                            {question.length}/200
+                        <Text className="text-xs font-semibold" style={{ color: question.length > LIMITS.pollQuestion.warning ? COLORS.danger.main : COLORS.neutral.main }}>
+                            {question.length}/{LIMITS.pollQuestion.max}
                         </Text>
                     </View>
                 </View>
@@ -159,12 +150,12 @@ export default function CreatePoll() {
                                     placeholderTextColor="#94A3B8"
                                     className="rounded-2xl p-4 text-base"
                                     style={{
-                                        backgroundColor: '#FFFFFF',
+                                        backgroundColor: COLORS.white,
                                         borderWidth: 2,
-                                        borderColor: option ? '#2563EB' : '#E2E8F0',
-                                        color: '#1E293B',
+                                        borderColor: option ? COLORS.primary.main : COLORS.neutral.border,
+                                        color: COLORS.neutral.dark,
                                     }}
-                                    maxLength={100}
+                                    maxLength={LIMITS.pollOption.max}
                                 />
                             </View>
                             {options.length > 2 && (
@@ -179,7 +170,7 @@ export default function CreatePoll() {
                         </View>
                     ))}
 
-                    {options.length < 6 && (
+                    {options.length < LIMITS.pollOptions.max && (
                         <TouchableOpacity
                             onPress={addOption}
                             className="rounded-2xl p-4 items-center flex-row justify-center"

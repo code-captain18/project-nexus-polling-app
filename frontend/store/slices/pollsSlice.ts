@@ -139,33 +139,57 @@ const pollsSlice = createSlice({
 
         // Vote Poll
         builder
-            .addCase(votePollAsync.pending, (state) => {
+            .addCase(votePollAsync.pending, (state, action) => {
+                // Optimistic update - update UI immediately before API responds
+                const { pollId, optionId } = action.meta.arg;
+                const poll = state.polls.find(p => p.id === pollId);
+                if (poll) {
+                    const option = poll.options.find(opt => opt.id === optionId);
+                    if (option) {
+                        option.votes++;
+                        poll.totalVotes++;
+                    }
+
+                    // Record user's vote optimistically
+                    const optionIndex = poll.options.findIndex(opt => opt.id === optionId);
+                    if (optionIndex >= 0) {
+                        const existingVoteIndex = state.userVotes.findIndex(v => v.pollId === pollId);
+                        if (existingVoteIndex >= 0) {
+                            state.userVotes[existingVoteIndex].optionIndex = optionIndex;
+                        } else {
+                            state.userVotes.push({
+                                pollId,
+                                optionIndex,
+                            });
+                        }
+                    }
+                }
                 state.loading = true;
                 state.error = null;
             })
             .addCase(votePollAsync.fulfilled, (state, action) => {
                 state.loading = false;
+                // Update with server response to ensure consistency
                 const index = state.polls.findIndex(p => p.id === action.payload.id);
                 if (index >= 0) {
                     state.polls[index] = action.payload;
-                }
-                // Record user's vote
-                const optionIndex = action.payload.options.findIndex(opt => opt.id === action.meta.arg.optionId);
-                if (optionIndex >= 0) {
-                    const existingVoteIndex = state.userVotes.findIndex(v => v.pollId === action.payload.id);
-                    if (existingVoteIndex >= 0) {
-                        state.userVotes[existingVoteIndex].optionIndex = optionIndex;
-                    } else {
-                        state.userVotes.push({
-                            pollId: action.payload.id,
-                            optionIndex,
-                        });
-                    }
                 }
             })
             .addCase(votePollAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
+                // Rollback optimistic update on error
+                const { pollId, optionId } = action.meta.arg;
+                const poll = state.polls.find(p => p.id === pollId);
+                if (poll) {
+                    const option = poll.options.find(opt => opt.id === optionId);
+                    if (option && option.votes > 0) {
+                        option.votes--;
+                        poll.totalVotes--;
+                    }
+                    // Remove user vote
+                    state.userVotes = state.userVotes.filter(v => v.pollId !== pollId);
+                }
             });
 
         // Delete Poll

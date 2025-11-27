@@ -5,8 +5,10 @@ import { Alert, Dimensions, ScrollView, Share, Text, TextInput, TouchableOpacity
 import { BarChart, PieChart } from "react-native-chart-kit";
 import { ChartTypeToggle, PageHeader, PrimaryButton, ResultsBreakdown, StatusBanner, VotingOption } from "../../components";
 import "../../global.css";
+import { useIsPollCreator, usePollAutoRefresh } from "../../hooks";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { deletePollAsync, fetchPollByIdAsync, updatePollAsync, votePollAsync } from "../../store/thunks/pollThunks";
+import { calculatePercentage, formatPollDate, formatShareMessage, isPollActive, validatePollData } from "../../utils";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -22,20 +24,17 @@ export default function PollDetail() {
     const [editOptions, setEditOptions] = useState<string[]>([]);
 
     const { polls, userVotes } = useAppSelector((state) => state.polls);
-    const { user } = useAppSelector((state) => state.auth);
     const poll = polls.find(p => p.id === id);
     const userVote = userVotes.find(v => v.pollId === id);
     const hasVoted = !!userVote;
-    const isCreator = user && poll && poll.createdBy === user.id;
+    const isCreator = useIsPollCreator(poll?.createdBy);
 
     // Check poll status
-    const now = new Date();
     const startDate = poll?.startDate ? new Date(poll.startDate) : null;
     const endDate = poll?.endDate ? new Date(poll.endDate) : null;
-
-    const isPending = startDate && now < startDate;
-    const isEnded = endDate && now > endDate;
-    const isActive = !isPending && !isEnded;
+    const isActive = isPollActive(poll?.startDate, poll?.endDate);
+    const isPending = startDate && new Date() < startDate;
+    const isEnded = endDate && new Date() > endDate;
 
     // Fetch poll data when screen comes into focus
     useFocusEffect(
@@ -46,16 +45,8 @@ export default function PollDetail() {
         }, [id, dispatch])
     );
 
-    // Auto-refresh poll data every 10 seconds when viewing results
-    useEffect(() => {
-        if (!isEditing && hasVoted && id && typeof id === 'string') {
-            const interval = setInterval(() => {
-                dispatch(fetchPollByIdAsync(id));
-            }, 10000); // Refresh every 10 seconds
-
-            return () => clearInterval(interval);
-        }
-    }, [id, dispatch, isEditing, hasVoted]);
+    // Auto-refresh poll data when viewing results (disabled - using focus refresh)
+    usePollAutoRefresh(id, false);
 
     useEffect(() => {
         if (id && typeof id === 'string') {
@@ -92,10 +83,8 @@ export default function PollDetail() {
         }
     };
 
-    const getPercentage = (votes: number) => {
-        if (poll.totalVotes === 0) return 0;
-        return Math.round((votes / poll.totalVotes) * 100);
-    };
+    const getPercentage = (votes: number) =>
+        calculatePercentage(votes, poll?.totalVotes || 0);
 
     const handleDelete = async () => {
         Alert.alert(
@@ -138,8 +127,11 @@ export default function PollDetail() {
     };
 
     const handleSaveEdit = async () => {
-        if (!editQuestion.trim() || editOptions.filter(opt => opt.trim()).length < 2) {
-            Alert.alert('Error', 'Please provide a question and at least 2 options');
+        const validOptions = editOptions.filter(opt => opt.trim());
+        const validation = validatePollData(editQuestion, validOptions);
+
+        if (!validation.isValid) {
+            Alert.alert('Error', validation.error || 'Invalid poll data');
             return;
         }
 
@@ -165,7 +157,10 @@ export default function PollDetail() {
 
     const handleShare = async () => {
         try {
-            const shareMessage = `📊 ${poll.question}\n\n${poll.options.map((opt, i) => `${i + 1}. ${opt.text}`).join('\n')}\n\nVote now on Vunes Poll!`;
+            const shareMessage = formatShareMessage(
+                poll.question,
+                poll.options.map(opt => opt.text)
+            );
 
             const result = await Share.share({
                 message: shareMessage,
@@ -311,24 +306,14 @@ export default function PollDetail() {
                             <StatusBanner
                                 type="pending"
                                 title="Poll Not Started Yet"
-                                subtitle={`Starts ${startDate.toLocaleString('en-US', {
-                                    month: 'short',
-                                    day: 'numeric',
-                                    hour: 'numeric',
-                                    minute: '2-digit'
-                                })}`}
+                                subtitle={`Starts ${formatPollDate(startDate)}`}
                             />
                         )}
                         {isEnded && endDate && (
                             <StatusBanner
                                 type="ended"
                                 title="Poll Has Ended"
-                                subtitle={`Ended ${endDate.toLocaleString('en-US', {
-                                    month: 'short',
-                                    day: 'numeric',
-                                    hour: 'numeric',
-                                    minute: '2-digit'
-                                })}`}
+                                subtitle={`Ended ${formatPollDate(endDate)}`}
                             />
                         )}
 

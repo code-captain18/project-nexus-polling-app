@@ -1,26 +1,39 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
+import { useMemo } from "react";
 import { Text, View } from "react-native";
 import { Provider, useSelector } from "react-redux";
 import "../global.css";
 import { RootState, store } from "../store";
+import { COLORS, CREATE_FAB, LIMITS, TAB_BAR } from "../utils/constants";
 
 function TabsLayout() {
   const notifications = useSelector((state: RootState) => state.notifications.notifications);
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const { user } = useSelector((state: RootState) => state.auth);
+  const isAuthenticated = !!user;
+
+  const unreadCount = useMemo(
+    () => notifications.filter((n) => !n.read).length,
+    [notifications]
+  );
+
+  const displayCount = unreadCount > LIMITS.unreadBadge.max
+    ? `${LIMITS.unreadBadge.max}+`
+    : unreadCount.toString();
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#0B6ECA",
-        tabBarInactiveTintColor: "#49657B",
+        tabBarActiveTintColor: TAB_BAR.activeTintColor,
+        tabBarInactiveTintColor: TAB_BAR.inactiveTintColor,
         tabBarStyle: {
-          backgroundColor: "#FFFFFF",
-          borderTopColor: "#49657B",
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
+          backgroundColor: COLORS.white,
+          borderTopColor: TAB_BAR.borderTopColor,
+          height: TAB_BAR.height,
+          paddingBottom: TAB_BAR.paddingBottom,
+          paddingTop: TAB_BAR.paddingTop,
+          display: isAuthenticated ? 'flex' : 'none',
         },
         tabBarShowLabel: false,
       }}
@@ -29,6 +42,7 @@ function TabsLayout() {
         name="index"
         options={{
           title: "Home",
+          href: isAuthenticated ? undefined : null,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
@@ -38,6 +52,7 @@ function TabsLayout() {
         name="notifications"
         options={{
           title: "Notifications",
+          href: isAuthenticated ? undefined : null,
           tabBarIcon: ({ color, size }) => (
             <View>
               <Ionicons name="notifications" size={size} color={color} />
@@ -47,7 +62,7 @@ function TabsLayout() {
                     position: 'absolute',
                     right: -6,
                     top: -3,
-                    backgroundColor: '#EF4444',
+                    backgroundColor: COLORS.danger.main,
                     borderRadius: 10,
                     minWidth: 18,
                     height: 18,
@@ -58,12 +73,12 @@ function TabsLayout() {
                 >
                   <Text
                     style={{
-                      color: '#FFFFFF',
+                      color: COLORS.white,
                       fontSize: 10,
                       fontWeight: 'bold',
                     }}
                   >
-                    {unreadCount > 99 ? '99+' : unreadCount}
+                    {displayCount}
                   </Text>
                 </View>
               )}
@@ -75,8 +90,36 @@ function TabsLayout() {
         name="create"
         options={{
           title: "Create Poll",
+          href: isAuthenticated ? undefined : null,
+          tabBarIcon: ({ color, focused }) => (
+            <View
+              style={{
+                top: CREATE_FAB.topOffset,
+                width: CREATE_FAB.width,
+                height: CREATE_FAB.height,
+                borderRadius: CREATE_FAB.borderRadius,
+                backgroundColor: focused ? COLORS.primary.dark : COLORS.primary.light,
+                justifyContent: 'center',
+                alignItems: 'center',
+                shadowColor: COLORS.primary.main,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
+                elevation: 8,
+              }}
+            >
+              <Ionicons name="add" size={CREATE_FAB.iconSize} color={COLORS.white} />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="friends"
+        options={{
+          title: "Friends",
+          href: isAuthenticated ? undefined : null,
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="add-circle" size={size} color={color} />
+            <Ionicons name="people" size={size} color={color} />
           ),
         }}
       />
@@ -84,6 +127,7 @@ function TabsLayout() {
         name="profile"
         options={{
           title: "Profile",
+          href: isAuthenticated ? undefined : null,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />
           ),
@@ -104,7 +148,7 @@ function TabsLayout() {
       <Tabs.Screen
         name="poll/[id]"
         options={{
-          href: null,
+          href: isAuthenticated ? null : null,
         }}
       />
     </Tabs>

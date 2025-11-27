@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+    Image,
     KeyboardAvoidingView,
     Platform,
     ScrollView,
@@ -55,6 +56,13 @@ export default function SignUp() {
             setLoading(true);
             const result = await dispatch(signUpAsync({ name, email, password })).unwrap();
 
+            // Reset form fields
+            setName("");
+            setEmail("");
+            setPassword("");
+            setConfirmPassword("");
+            setEmailTouched(false);
+
             // Navigate to home on success
             router.replace("/" as any);
         } catch (error: any) {
@@ -80,27 +88,19 @@ export default function SignUp() {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             className="flex-1 bg-secondary-dark"
         >
-            {/* Header with Back Button */}
-            <View className="px-6 pt-12 pb-4">
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    className="self-start"
-                >
-                    <Text className="text-primary text-base">← Back</Text>
-                </TouchableOpacity>
-            </View>
-
             <ScrollView
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
                 className="flex-1"
             >
-                <View className="px-6">
+                <View className="px-6 pt-12">
                     {/* Logo/Title Section */}
                     <View className="items-center mb-6">
-                        <View className="w-20 h-20 bg-primary rounded-full items-center justify-center mb-4">
-                            <Text className="text-4xl">📊</Text>
-                        </View>
+                        <Image
+                            source={require("../assets/images/vunes-logo.png")}
+                            style={{ width: 80, height: 80, marginBottom: 16 }}
+                            resizeMode="contain"
+                        />
                         <Text className="text-2xl font-bold text-background mb-1">
                             Create Account
                         </Text>
