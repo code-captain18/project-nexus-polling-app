@@ -26,7 +26,12 @@ module.exports = {
                 monochromeImage: "./assets/images/android-icon-monochrome.png"
             },
             edgeToEdgeEnabled: true,
-            predictiveBackGestureEnabled: false
+            predictiveBackGestureEnabled: false,
+            usesCleartextTraffic: true,
+            permissions: [
+                "INTERNET",
+                "ACCESS_NETWORK_STATE"
+            ]
         },
         web: {
             bundler: "metro",

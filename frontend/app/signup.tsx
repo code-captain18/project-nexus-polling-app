@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import "../global.css";
 import { useAppDispatch } from "../store/hooks";
 import { signUpAsync } from "../store/thunks/authThunks";
@@ -84,167 +85,169 @@ export default function SignUp() {
     const showEmailError = emailTouched && email.trim() !== "" && !isValidEmail(email);
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            className="flex-1 bg-secondary-dark"
-        >
-            <ScrollView
-                keyboardShouldPersistTaps="handled"
-                showsVerticalScrollIndicator={false}
+        <SafeAreaView className="flex-1 bg-secondary-dark" edges={['top', 'bottom']}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
                 className="flex-1"
             >
-                <View className="px-6 pt-12">
-                    {/* Logo/Title Section */}
-                    <View className="items-center mb-6">
-                        <Image
-                            source={require("../assets/images/vunes-logo.png")}
-                            style={{ width: 80, height: 80, marginBottom: 16 }}
-                            resizeMode="contain"
-                        />
-                        <Text className="text-2xl font-bold text-background mb-1">
-                            Create Account
-                        </Text>
-                        <Text className="text-primary-light text-sm">
-                            Join the polling community
-                        </Text>
-                    </View>
-
-                    {/* Form */}
-                    <View className="mb-4">
-                        {/* Name Input */}
-                        <View className="mb-3">
-                            <Text className="text-primary-light text-xs font-medium mb-1.5">
-                                Full Name
-                            </Text>
-                            <TextInput
-                                value={name}
-                                onChangeText={setName}
-                                placeholder="John Doe"
-                                placeholderTextColor="#a1a3ae"
-                                autoCapitalize="words"
-                                autoComplete="name"
-                                className="bg-white/10 border-2 border-primary-light/30 rounded-xl p-3.5 text-background text-base"
+                <ScrollView
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                    className="flex-1"
+                >
+                    <View className="px-6 pt-12">
+                        {/* Logo/Title Section */}
+                        <View className="items-center mb-6">
+                            <Image
+                                source={require("../assets/images/vunes-logo.png")}
+                                style={{ width: 80, height: 80, marginBottom: 16 }}
+                                resizeMode="contain"
                             />
+                            <Text className="text-2xl font-bold text-background mb-1">
+                                Create Account
+                            </Text>
+                            <Text className="text-primary-light text-sm">
+                                Join the polling community
+                            </Text>
                         </View>
 
-                        {/* Email Input */}
-                        <View className="mb-3">
-                            <Text className="text-primary-light text-xs font-medium mb-1.5">
-                                Email Address
-                            </Text>
-                            <TextInput
-                                value={email}
-                                onChangeText={setEmail}
-                                onBlur={() => setEmailTouched(true)}
-                                placeholder="your@email.com"
-                                placeholderTextColor="#a1a3ae"
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                                autoComplete="email"
-                                style={{
-                                    borderColor: showEmailError ? '#EF4444' : 'rgba(186, 230, 253, 0.3)',
-                                }}
-                                className="bg-white/10 border-2 rounded-xl p-3.5 text-background text-base"
-                            />
-                            {showEmailError && (
-                                <Text className="text-red-400 text-xs mt-1">
-                                    Please enter a valid email address
-                                </Text>
-                            )}
-                        </View>
-
-                        {/* Password Input */}
-                        <View className="mb-3">
-                            <Text className="text-primary-light text-xs font-medium mb-1.5">
-                                Password
-                            </Text>
-                            <TextInput
-                                value={password}
-                                onChangeText={setPassword}
-                                placeholder="At least 6 characters"
-                                placeholderTextColor="#a1a3ae"
-                                secureTextEntry
-                                autoCapitalize="none"
-                                autoComplete="password-new"
-                                className="bg-white/10 border-2 border-primary-light/30 rounded-xl p-3.5 text-background text-base"
-                            />
-                        </View>
-
-                        {/* Confirm Password Input */}
+                        {/* Form */}
                         <View className="mb-4">
-                            <Text className="text-primary-light text-xs font-medium mb-1.5">
-                                Confirm Password
-                            </Text>
-                            <TextInput
-                                value={confirmPassword}
-                                onChangeText={setConfirmPassword}
-                                placeholder="Re-enter your password"
-                                placeholderTextColor="#a1a3ae"
-                                secureTextEntry
-                                autoCapitalize="none"
-                                autoComplete="password-new"
-                                className="bg-white/10 border-2 border-primary-light/30 rounded-xl p-3.5 text-background text-base"
-                            />
-                            {confirmPassword !== "" && password !== confirmPassword && (
-                                <Text className="text-red-400 text-xs mt-1">
-                                    Passwords do not match
+                            {/* Name Input */}
+                            <View className="mb-3">
+                                <Text className="text-primary-light text-xs font-medium mb-1.5">
+                                    Full Name
                                 </Text>
-                            )}
+                                <TextInput
+                                    value={name}
+                                    onChangeText={setName}
+                                    placeholder="John Doe"
+                                    placeholderTextColor="#a1a3ae"
+                                    autoCapitalize="words"
+                                    autoComplete="name"
+                                    className="bg-white/10 border-2 border-primary-light/30 rounded-xl p-3.5 text-background text-base"
+                                />
+                            </View>
+
+                            {/* Email Input */}
+                            <View className="mb-3">
+                                <Text className="text-primary-light text-xs font-medium mb-1.5">
+                                    Email Address
+                                </Text>
+                                <TextInput
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    onBlur={() => setEmailTouched(true)}
+                                    placeholder="your@email.com"
+                                    placeholderTextColor="#a1a3ae"
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
+                                    autoComplete="email"
+                                    style={{
+                                        borderColor: showEmailError ? '#EF4444' : 'rgba(186, 230, 253, 0.3)',
+                                    }}
+                                    className="bg-white/10 border-2 rounded-xl p-3.5 text-background text-base"
+                                />
+                                {showEmailError && (
+                                    <Text className="text-red-400 text-xs mt-1">
+                                        Please enter a valid email address
+                                    </Text>
+                                )}
+                            </View>
+
+                            {/* Password Input */}
+                            <View className="mb-3">
+                                <Text className="text-primary-light text-xs font-medium mb-1.5">
+                                    Password
+                                </Text>
+                                <TextInput
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    placeholder="At least 6 characters"
+                                    placeholderTextColor="#a1a3ae"
+                                    secureTextEntry
+                                    autoCapitalize="none"
+                                    autoComplete="password-new"
+                                    className="bg-white/10 border-2 border-primary-light/30 rounded-xl p-3.5 text-background text-base"
+                                />
+                            </View>
+
+                            {/* Confirm Password Input */}
+                            <View className="mb-4">
+                                <Text className="text-primary-light text-xs font-medium mb-1.5">
+                                    Confirm Password
+                                </Text>
+                                <TextInput
+                                    value={confirmPassword}
+                                    onChangeText={setConfirmPassword}
+                                    placeholder="Re-enter your password"
+                                    placeholderTextColor="#a1a3ae"
+                                    secureTextEntry
+                                    autoCapitalize="none"
+                                    autoComplete="password-new"
+                                    className="bg-white/10 border-2 border-primary-light/30 rounded-xl p-3.5 text-background text-base"
+                                />
+                                {confirmPassword !== "" && password !== confirmPassword && (
+                                    <Text className="text-red-400 text-xs mt-1">
+                                        Passwords do not match
+                                    </Text>
+                                )}
+                            </View>
+
+                            {/* Sign Up Button */}
+                            <TouchableOpacity
+                                onPress={handleSignUp}
+                                disabled={!canSubmit || loading}
+                                className={`rounded-full py-3.5 items-center ${canSubmit && !loading ? "bg-primary" : "bg-neutral/30"
+                                    }`}
+                            >
+                                <Text className="text-white text-base font-semibold">
+                                    {loading ? "Creating Account..." : "Sign Up"}
+                                </Text>
+                            </TouchableOpacity>
+
+                            {/* Divider */}
+                            <View className="flex-row items-center my-4">
+                                <View className="flex-1 h-px bg-primary-light/30" />
+                                <Text className="text-neutral mx-3 text-xs">OR</Text>
+                                <View className="flex-1 h-px bg-primary-light/30" />
+                            </View>
+
+                            {/* Social Sign Up */}
+                            <TouchableOpacity className="border-2 border-primary-light/30 rounded-full py-3 items-center mb-2">
+                                <Text className="text-background text-sm font-medium">
+                                    Continue with Google
+                                </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity className="border-2 border-primary-light/30 rounded-full py-3 items-center">
+                                <Text className="text-background text-sm font-medium">
+                                    Continue with Apple
+                                </Text>
+                            </TouchableOpacity>
                         </View>
 
-                        {/* Sign Up Button */}
-                        <TouchableOpacity
-                            onPress={handleSignUp}
-                            disabled={!canSubmit || loading}
-                            className={`rounded-full py-3.5 items-center ${canSubmit && !loading ? "bg-primary" : "bg-neutral/30"
-                                }`}
-                        >
-                            <Text className="text-white text-base font-semibold">
-                                {loading ? "Creating Account..." : "Sign Up"}
+                        {/* Sign In Link */}
+                        <View className="flex-row justify-center items-center mt-3">
+                            <Text className="text-primary-light text-sm">
+                                Already have an account?{" "}
                             </Text>
-                        </TouchableOpacity>
-
-                        {/* Divider */}
-                        <View className="flex-row items-center my-4">
-                            <View className="flex-1 h-px bg-primary-light/30" />
-                            <Text className="text-neutral mx-3 text-xs">OR</Text>
-                            <View className="flex-1 h-px bg-primary-light/30" />
+                            <TouchableOpacity onPress={() => router.push("/signin" as any)}>
+                                <Text className="text-primary text-sm font-semibold">
+                                    Sign In
+                                </Text>
+                            </TouchableOpacity>
                         </View>
 
-                        {/* Social Sign Up */}
-                        <TouchableOpacity className="border-2 border-primary-light/30 rounded-full py-3 items-center mb-2">
-                            <Text className="text-background text-sm font-medium">
-                                Continue with Google
-                            </Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity className="border-2 border-primary-light/30 rounded-full py-3 items-center">
-                            <Text className="text-background text-sm font-medium">
-                                Continue with Apple
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* Sign In Link */}
-                    <View className="flex-row justify-center items-center mt-3">
-                        <Text className="text-primary-light text-sm">
-                            Already have an account?{" "}
+                        {/* Terms */}
+                        <Text className="text-neutral text-xs text-center mt-3 mb-4">
+                            By signing up, you agree to our{" "}
+                            <Text className="text-primary-light">Terms of Service</Text> and{" "}
+                            <Text className="text-primary-light">Privacy Policy</Text>
                         </Text>
-                        <TouchableOpacity onPress={() => router.push("/signin" as any)}>
-                            <Text className="text-primary text-sm font-semibold">
-                                Sign In
-                            </Text>
-                        </TouchableOpacity>
                     </View>
-
-                    {/* Terms */}
-                    <Text className="text-neutral text-xs text-center mt-3 mb-4">
-                        By signing up, you agree to our{" "}
-                        <Text className="text-primary-light">Terms of Service</Text> and{" "}
-                        <Text className="text-primary-light">Privacy Policy</Text>
-                    </Text>
-                </View>
-            </ScrollView>
-        </KeyboardAvoidingView>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }

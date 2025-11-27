@@ -1,30 +1,32 @@
 import Constants from 'expo-constants';
 
-// Determine if we're in development or production
-const __DEV__ = process.env.NODE_ENV === 'development';
-
 // Get the correct API URL based on environment
 const getApiUrl = () => {
-    // Production URL
-    if (!__DEV__) {
-        return 'https://project-nexus-polling-app.onrender.com';
+    // Check if running in Expo Go (development)
+    const isExpoGo = Constants.appOwnership === 'expo';
+
+    // Development: Running in Expo Go or local dev
+    if (isExpoGo || __DEV__) {
+        // Try to get the debugger host from Constants
+        const debuggerHost = Constants.manifest?.debuggerHost ||
+            Constants.manifest2?.extra?.expoGo?.debuggerHost ||
+            Constants.expoConfig?.hostUri;
+
+        if (debuggerHost) {
+            // Extract IP from debuggerHost (format: "192.168.0.178:8081")
+            const host = debuggerHost.split(':')[0];
+            console.log('[API Config] Detected host:', host);
+            return `http://${host}:3000`;
+        }
+
+        // Fallback to localhost for web/development build
+        console.log('[API Config] Using localhost fallback');
+        return 'http://localhost:3000';
     }
 
-    // Development: Try to get the debugger host from Constants
-    const debuggerHost = Constants.manifest?.debuggerHost ||
-        Constants.manifest2?.extra?.expoGo?.debuggerHost ||
-        Constants.expoConfig?.hostUri;
-
-    if (debuggerHost) {
-        // Extract IP from debuggerHost (format: "192.168.0.178:8081")
-        const host = debuggerHost.split(':')[0];
-        console.log('[API Config] Detected host:', host);
-        return `http://${host}:3000`;
-    }
-
-    // Fallback to localhost for web/development build
-    console.log('[API Config] Using localhost fallback');
-    return 'http://localhost:3000';
+    // Production: Standalone app (built APK/IPA)
+    console.log('[API Config] Using production URL');
+    return 'https://project-nexus-polling-app.onrender.com';
 };
 
 // API Configuration
@@ -33,7 +35,7 @@ export const API_CONFIG = {
     TIMEOUT: 10000, // 10 seconds
 };
 
-console.log('[API Config] Environment:', __DEV__ ? 'development' : 'production');
+console.log('[API Config] Environment:', Constants.appOwnership || 'standalone');
 console.log('[API Config] Final BASE_URL:', API_CONFIG.BASE_URL);// API Endpoints
 export const API_ENDPOINTS = {
     // Auth endpoints

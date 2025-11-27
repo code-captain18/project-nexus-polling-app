@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { useMemo } from "react";
 import { Text, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider, useSelector } from "react-redux";
 import "../global.css";
 import { RootState, store } from "../store";
@@ -157,8 +158,10 @@ function TabsLayout() {
 
 export default function RootLayout() {
   return (
-    <Provider store={store}>
-      <TabsLayout />
-    </Provider>
+    <SafeAreaProvider>
+      <Provider store={store}>
+        <TabsLayout />
+      </Provider>
+    </SafeAreaProvider>
   );
 }
