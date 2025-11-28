@@ -15,7 +15,25 @@ module.exports = {
         },
         ios: {
             supportsTablet: true,
-            bundleIdentifier: "com.vunes.poll"
+            bundleIdentifier: "com.vunes.poll",
+            infoPlist: {
+                ITSAppUsesNonExemptEncryption: false,
+                NSAppTransportSecurity: {
+                    NSAllowsArbitraryLoads: false,
+                    NSExceptionDomains: {
+                        "onrender.com": {
+                            NSExceptionAllowsInsecureHTTPLoads: false,
+                            NSIncludesSubdomains: true,
+                            NSExceptionRequiresForwardSecrecy: true,
+                            NSExceptionMinimumTLSVersion: "TLSv1.2"
+                        },
+                        "localhost": {
+                            NSExceptionAllowsInsecureHTTPLoads: true,
+                            NSIncludesSubdomains: true
+                        }
+                    }
+                }
+            }
         },
         android: {
             package: "com.vunes.poll",
