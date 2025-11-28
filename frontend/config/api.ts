@@ -30,7 +30,7 @@ const getApiUrl = () => {
 
     // Production: Standalone app (built APK/IPA)
     console.log('[API Config] Using production URL');
-    return 'https://project-nexus-polling-app.onrender.com';
+    return 'https://project-nexus-backend.vercel.app';
 };
 
 // API Configuration
