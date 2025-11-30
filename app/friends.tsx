@@ -1,33 +1,23 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { PageHeader } from "../components";
 import "../global.css";
 
 export default function Friends() {
     const [searchQuery, setSearchQuery] = useState("");
 
     return (
-        <SafeAreaView className="flex-1 bg-background" edges={['top']}>
-            {/* Header */}
-            <View className="pb-6 px-6" style={{ backgroundColor: '#1E293B' }}>
-                <View className="flex-row items-center justify-between mb-3">
-                    <View className="flex-1">
-                        <Text className="text-3xl font-bold text-white mb-1">
-                            Friends
-                        </Text>
-                        <Text className="text-base" style={{ color: '#CBD5E1' }}>
-                            Connect and share polls with friends
-                        </Text>
-                    </View>
-                    <View className="w-12 h-12 rounded-full items-center justify-center" style={{ backgroundColor: '#2563EB' }}>
-                        <Ionicons name="people" size={24} color="#FFFFFF" />
-                    </View>
-                </View>
-            </View>
+        <View className="flex-1 bg-secondary-dark">
+            <StatusBar barStyle="light-content" backgroundColor="#1E293B" translucent={false} />
+            <PageHeader
+                title="Friends"
+                subtitle="Connect and share polls with friends"
+                icon="people"
+            />
 
             {/* Search Bar */}
-            <View className="px-5 pt-4 pb-2">
+            <View className="bg-background px-5 pt-4 pb-2">
                 <View className="flex-row items-center bg-white rounded-2xl px-4 py-3" style={{
                     shadowColor: '#1E293B',
                     shadowOffset: { width: 0, height: 2 },
@@ -50,7 +40,7 @@ export default function Friends() {
             </View>
 
             {/* Friends List */}
-            <ScrollView className="flex-1 px-5 pt-4" showsVerticalScrollIndicator={false}>
+            <ScrollView className="flex-1 bg-background px-5 pt-4" showsVerticalScrollIndicator={false}>
                 {/* Empty State */}
                 <View className="items-center justify-center py-20">
                     <View className="w-20 h-20 rounded-full mb-6 items-center justify-center" style={{ backgroundColor: '#EFF6FF' }}>
@@ -84,6 +74,6 @@ export default function Friends() {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
