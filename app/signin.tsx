@@ -1,7 +1,6 @@
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-    Alert,
     Image,
     KeyboardAvoidingView,
     Platform,
@@ -9,10 +8,9 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View,
+    View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { API_CONFIG } from "../config/api";
 import "../global.css";
 import { useAppDispatch } from "../store/hooks";
 import { signInAsync } from "../store/thunks/authThunks";
@@ -32,13 +30,13 @@ export default function SignIn() {
     const [emailTouched, setEmailTouched] = useState(false);
 
     // Show API URL on component mount for debugging
-    useEffect(() => {
-        Alert.alert(
-            'API Configuration',
-            `Using: ${API_CONFIG.BASE_URL}`,
-            [{ text: 'OK' }]
-        );
-    }, []);
+    // useEffect(() => {
+    //     Alert.alert(
+    //         'API Configuration',
+    //         `Using: ${API_CONFIG.BASE_URL}`,
+    //         [{ text: 'OK' }]
+    //     );
+    // }, []);
 
     const handleSignIn = async () => {
         // Validate inputs

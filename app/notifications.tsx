@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import "../global.css";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { fetchNotificationsAsync, markNotificationReadAsync } from "../store/thunks/notificationThunks";
@@ -37,9 +38,9 @@ export default function Notifications() {
     };
 
     return (
-        <View className="flex-1 bg-background">
+        <SafeAreaView className="flex-1 bg-background" edges={['top']}>
             {/* Header */}
-            <View className="bg-secondary-dark pt-12 pb-6 px-6">
+            <View className="bg-secondary-dark pb-6 px-6">
                 <Text className="text-3xl font-bold text-background mb-2">
                     Notifications
                 </Text>
@@ -114,6 +115,6 @@ export default function Notifications() {
                     ))
                 )}
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 }

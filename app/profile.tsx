@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import "../global.css";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { signOut } from "../store/slices/authSlice";
@@ -24,9 +25,9 @@ export default function Profile() {
 
     if (!isAuthenticated) {
         return (
-            <View className="flex-1 bg-background">
+            <SafeAreaView className="flex-1 bg-background" edges={['top']}>
                 {/* Header */}
-                <View className="bg-secondary-dark pt-12 pb-6 px-6">
+                <View className="bg-secondary-dark pb-6 px-6">
                     <Text className="text-3xl font-bold text-background mb-2">
                         Profile
                     </Text>
@@ -48,14 +49,14 @@ export default function Profile() {
                         <Text className="text-white text-base font-semibold">Sign In</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </SafeAreaView>
         );
     }
 
     return (
-        <View className="flex-1 bg-background">
+        <SafeAreaView className="flex-1 bg-background" edges={['top']}>
             {/* Header */}
-            <View className="bg-secondary-dark pt-12 pb-6 px-6">
+            <View className="bg-secondary-dark pb-6 px-6">
                 <Text className="text-3xl font-bold text-background mb-2">Profile</Text>
                 <Text className="text-primary-light text-sm">
                     Manage your account and polls
@@ -121,6 +122,6 @@ export default function Profile() {
                     <Text className="text-white text-base font-semibold">Sign Out</Text>
                 </TouchableOpacity>
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 }
