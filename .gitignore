@@ -50,11 +50,43 @@ eas.json.backup
 *.swp
 *.swo
 
-# Backend build
+# Build artifacts
 backend/dist/
 
+# Examples
 app-example
 
-# generated native folders
+# Generated native folders
 /ios
 /android
+
+# Logs
+logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS files
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Android
+*.apk
+*.ap_
+*.aab
+
+# iOS
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Package manager lock files (optional - uncomment if needed)
+# package-lock.json
+# yarn.lock
+
+# Bug reports
+*.zip
+bugreport-*.zip
