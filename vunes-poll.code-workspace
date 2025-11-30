@@ -1,0 +1,24 @@
+{
+    "folders": [
+        {
+            "name": "Frontend",
+            "path": "./frontend"
+        },
+        {
+            "name": "Backend",
+            "path": "./backend"
+        },
+        {
+            "name": "Root",
+            "path": "."
+        }
+    ],
+    "settings": {
+        "typescript.tsdk": "frontend/node_modules/typescript/lib",
+        "files.exclude": {
+            "**/node_modules": true,
+            "**/.expo": true,
+            "**/dist": true
+        }
+    }
+}
