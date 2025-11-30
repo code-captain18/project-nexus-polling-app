@@ -1,17 +1,17 @@
 module.exports = {
     expo: {
-        name: "vunes-poll",
+        name: "Vunes Poll",
         slug: "vunes-poll",
         version: "1.0.0",
         orientation: "portrait",
-        icon: "./assets/images/icon.png",
+        icon: "./assets/images/vunes-logo.png",
         scheme: "vunes-poll",
         userInterfaceStyle: "automatic",
         newArchEnabled: true,
         splash: {
-            image: "./assets/images/splash-icon.png",
+            image: "./assets/images/vunes-logo.png",
             resizeMode: "contain",
-            backgroundColor: "#ffffff"
+            backgroundColor: "#1E293B"
         },
         ios: {
             supportsTablet: true,

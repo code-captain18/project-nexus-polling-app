@@ -6,12 +6,12 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
+    StatusBar,
     Text,
     TextInput,
     TouchableOpacity,
     View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { DateTimePickerButton, PageHeader, PrimaryButton } from "../components";
 import "../global.css";
 import { useAppDispatch } from "../store/hooks";
@@ -91,7 +91,8 @@ export default function CreatePoll() {
         options.filter((opt) => opt.trim() !== "").length >= 2;
 
     return (
-        <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+        <View className="flex-1 bg-secondary-dark">
+            <StatusBar barStyle="light-content" backgroundColor="#1E293B" translucent={false} />
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 className="flex-1"
@@ -99,11 +100,9 @@ export default function CreatePoll() {
                 <PageHeader
                     title="New Poll"
                     subtitle="Create and share your poll"
-                    showBack
-                    backText="Cancel"
                 />
 
-                <ScrollView className="flex-1 px-5 pt-6" showsVerticalScrollIndicator={false}>
+                <ScrollView className="flex-1 bg-background px-5 pt-6" showsVerticalScrollIndicator={false}>
                     {/* Question Input */}
                     <View className="mb-6">
                         <Text className="text-sm font-bold mb-3" style={{ color: '#1E293B' }}>
@@ -355,6 +354,6 @@ export default function CreatePoll() {
                     />
                 </View>
             </KeyboardAvoidingView>
-        </SafeAreaView>
+        </View>
     );
 }

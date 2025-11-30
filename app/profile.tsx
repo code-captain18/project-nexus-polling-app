@@ -1,11 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { PageHeader } from "../components";
 import "../global.css";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { signOut } from "../store/slices/authSlice";
 import { logoutAsync } from "../store/thunks/authThunks";
+
 
 export default function Profile() {
     const router = useRouter();
@@ -25,16 +26,16 @@ export default function Profile() {
 
     if (!isAuthenticated) {
         return (
-            <SafeAreaView className="flex-1 bg-background" edges={['top']}>
-                {/* Header */}
-                <View className="bg-secondary-dark pb-6 px-6">
-                    <Text className="text-3xl font-bold text-background mb-2">
-                        Profile
-                    </Text>
-                </View>
+            <View className="flex-1 bg-secondary-dark">
+                <StatusBar barStyle="light-content" backgroundColor="#1E293B" translucent={false} />
+                <PageHeader
+                    title="Profile"
+                    subtitle="Manage your account and polls"
+                    icon="person-circle"
+                />
 
                 {/* Sign In Prompt */}
-                <View className="flex-1 items-center justify-center px-6">
+                <View className="flex-1 bg-background px-6 items-center justify-center">
                     <Ionicons name="person-circle-outline" size={80} color="#49657B" />
                     <Text className="text-xl font-semibold text-secondary-dark mt-4 mb-2">
                         Sign in to view your profile
@@ -49,21 +50,20 @@ export default function Profile() {
                         <Text className="text-white text-base font-semibold">Sign In</Text>
                     </TouchableOpacity>
                 </View>
-            </SafeAreaView>
+            </View>
         );
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-background" edges={['top']}>
-            {/* Header */}
-            <View className="bg-secondary-dark pb-6 px-6">
-                <Text className="text-3xl font-bold text-background mb-2">Profile</Text>
-                <Text className="text-primary-light text-sm">
-                    Manage your account and polls
-                </Text>
-            </View>
+        <View className="flex-1 bg-secondary-dark">
+            <StatusBar barStyle="light-content" backgroundColor="#1E293B" translucent={false} />
+            <PageHeader
+                title="Profile"
+                subtitle="Manage your account and polls"
+                icon="person-circle"
+            />
 
-            <ScrollView className="flex-1 px-6 pt-6">
+            <ScrollView className="flex-1 bg-background px-6 pt-6">
                 {/* User Info Card */}
                 <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm border border-primary-light/20">
                     <View className="items-center mb-4">
@@ -117,11 +117,11 @@ export default function Profile() {
                 {/* Sign Out Button */}
                 <TouchableOpacity
                     onPress={handleSignOut}
-                    className="bg-red-500 rounded-full py-4 items-center shadow-lg mb-6"
+                    className="bg-danger rounded-full py-4 items-center shadow-lg mb-6"
                 >
                     <Text className="text-white text-base font-semibold">Sign Out</Text>
                 </TouchableOpacity>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }

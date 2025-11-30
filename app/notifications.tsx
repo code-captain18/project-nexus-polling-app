@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { PageHeader } from "../components";
 import "../global.css";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { fetchNotificationsAsync, markNotificationReadAsync } from "../store/thunks/notificationThunks";
@@ -11,6 +11,7 @@ export default function Notifications() {
     const dispatch = useAppDispatch();
     const { isAuthenticated } = useAppSelector((state) => state.auth);
     const { notifications, loading, error } = useAppSelector((state) => state.notifications);
+    const { polls } = useAppSelector((state) => state.polls);
     const [retryCount, setRetryCount] = useState(0);
 
     useEffect(() => {
@@ -31,26 +32,37 @@ export default function Notifications() {
             handleMarkAsRead(notification.id);
         }
 
-        // Navigate to poll if pollId exists in data
-        if (notification.data?.pollId) {
-            router.push(`/poll/${notification.data.pollId}` as any);
+        // Try to get pollId from notification data first
+        if (notification.pollId) {
+            router.push(`/poll/${notification.pollId}` as any);
+            return;
+        }
+
+        // If no direct pollId, extract from message as fallback
+        // Message format: "Someone voted on your poll: [POLL QUESTION]"
+        const messagePrefix = "Someone voted on your poll: ";
+        if (notification.message && notification.message.startsWith(messagePrefix)) {
+            const pollQuestion = notification.message.substring(messagePrefix.length);
+
+            // Find the poll by question
+            const matchingPoll = polls.find(poll => poll.question === pollQuestion);
+            if (matchingPoll) {
+                router.push(`/poll/${matchingPoll.id}` as any);
+            }
         }
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-background" edges={['top']}>
-            {/* Header */}
-            <View className="bg-secondary-dark pb-6 px-6">
-                <Text className="text-3xl font-bold text-background mb-2">
-                    Notifications
-                </Text>
-                <Text className="text-primary-light text-sm">
-                    Stay updated with your polls
-                </Text>
-            </View>
+        <View className="flex-1 bg-secondary-dark">
+            <StatusBar barStyle="light-content" backgroundColor="#1E293B" translucent={false} />
+            <PageHeader
+                title="Notifications"
+                subtitle="Stay updated with your polls"
+                icon="notifications"
+            />
 
             {/* Notifications List */}
-            <ScrollView className="flex-1 px-6 pt-4">
+            <ScrollView className="flex-1 bg-background px-6 pt-4">
                 {!isAuthenticated ? (
                     <View className="items-center justify-center py-12">
                         <Text className="text-neutral text-center mb-2">
@@ -115,6 +127,6 @@ export default function Notifications() {
                     ))
                 )}
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
