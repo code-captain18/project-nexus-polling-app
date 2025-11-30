@@ -229,10 +229,6 @@ The app connects to a deployed Vercel backend with the following endpoints:
 - **Performance Optimization**: Implemented efficient data fetching and caching
 - **User Experience**: Focus on intuitive navigation and responsive design
 
-## 📄 License
-
-ISC License - See LICENSE file for details
-
 ---
 
 **Built by Prince Vuha**
